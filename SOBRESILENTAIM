@@ -1,0 +1,91 @@
+-- MOBILE ABSOLUTE BOSS SILENT AIM (1k+ HP / JJSploit Optimized)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- SETTINGS
+_G.BossAimActive = true
+local MIN_HP = 100 -- Hard floor: ignores everything under 1k HP
+local TargetBoss = nil
+
+-- UI Toggle
+local ScreenGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+local Btn = Instance.new("TextButton", ScreenGui)
+Btn.Size = UDim2.new(0, 150, 0, 50)
+Btn.Position = UDim2.new(0.5, -75, 0.05, 0)
+Btn.Text = "Silent Aim: ON"
+Btn.BackgroundColor3 = Color3.fromRGB(0, 80, 255)
+Btn.TextColor3 = Color3.new(1,1,1)
+Btn.BorderSizePixel = 0
+
+Btn.MouseButton1Click:Connect(function()
+    _G.BossAimActive = not _G.BossAimActive
+    Btn.Text = _G.BossAimActive and "Silent Aim: ON" or "Silent Aim: OFF"
+    Btn.BackgroundColor3 = _G.BossAimActive and Color3.fromRGB(0, 80, 255) or Color3.fromRGB(150, 0, 0)
+    if not _G.BossAimActive then TargetBoss = nil end
+end)
+
+-- The "Boss Filter" - Only grabs the highest HP NPC
+local function FindBoss()
+    local bestTarget = nil
+    local highestHP = MIN_HP
+    
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Humanoid") and v.Health > 0 and v.Parent ~= LocalPlayer.Character then
+            -- Exclude regular players
+            if not Players:GetPlayerFromCharacter(v.Parent) then
+                if v.Health >= highestHP then
+                    highestHP = v.Health
+                    bestTarget = v.Parent:FindFirstChild("HumanoidRootPart")
+                end
+            end
+        end
+    end
+    return bestTarget
+end
+
+-- Update the Target every 1 second (Stops lag)
+task.spawn(function()
+    while task.wait(1) do
+        if _G.BossAimActive then
+            TargetBoss = FindBoss()
+        end
+    end
+end)
+
+-- THE ABSOLUTE SILENT HOOK
+-- This tricks the game into thinking you are clicking/touching the boss
+local mt = getrawmetatable(game)
+local oldIndex = mt.__index
+setreadonly(mt, false)
+
+mt.__index = newcclosure(function(self, index)
+    -- This ONLY activates if:
+    -- 1. The button is ON
+    -- 2. A Boss is found
+    -- 3. The game is asking for your Mouse position
+    if _G.BossAimActive and TargetBoss and self == Mouse and (index == "Hit" or index == "Target") then
+        return (index == "Hit" and TargetBoss.CFrame or TargetBoss.Parent)
+    end
+    return oldIndex(self, index)
+end)
+
+setreadonly(mt, true)
+print("v9 Loaded. Strictly Bosses, No Camera Lock, No Lag.")
+
+--local CoreGui = game:GetService("CoreGui")
+
+-- Create or define your ScreenGui
+local myGui = Instance.new("ScreenGui")
+myGui.Name = "MyExploitGui"
+myGui.ResetOnSpawn = false
+
+-- Parent it to CoreGui so it doesn't delete on death
+myGui.Parent = CoreGui
+
+-- Put your frames, buttons, and code below here:
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 150)
+frame.Position = UDim2.new(0.5, -100, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Parent = myGui
