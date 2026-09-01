@@ -1,6 +1,3 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
 -- MOBILE ABSOLUTE BOSS SILENT AIM (1k+ HP / JJSploit Optimized)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
