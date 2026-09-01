@@ -72,25 +72,3 @@ end)
 
 setreadonly(mt, true)
 print("v9 Loaded. Strictly Bosses, No Camera Lock, No Lag.")
-
-local StarterGui = game:GetService("StarterGui")
-
--- Define the details of your notification in a dictionary
-local notificationData = {
-    Title = "Happy Exploiting",        -- The bold header text
-    Text = "So tuffy", -- The main body text
-    Icon = "rbxassetid://112611951378589",            -- Optional: Add an asset ID string for an image
-    Duration = 5,                       -- How long the pop-up stays visible (in seconds)
-    
-    -- Optional callback function if the player clicks the notification
-    Callback = Instance.new("BindableFunction") 
-}
-
--- Handle what happens when the player clicks the pop-up
-notificationData.Callback.OnInvoke = function(buttonClicked)
-    print("Player clicked the notification!")
-end
-
--- Fire the notification
-StarterGui:SetCore("SendNotification", notificationData)
-
